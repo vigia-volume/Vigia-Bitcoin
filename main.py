@@ -1,24 +1,18 @@
-import threading
-import http.server
-import socketserver
 import os
+import threading
+from flask import Flask
 
-# Função para manter o Render feliz (servidor HTTP básico)
-def run_web_server():
-    PORT = int(os.environ.get("PORT", 10000))
-    Handler = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        httpd.serve_forever()
+app = Flask(__name__)
 
-# Inicia o servidor web em segundo plano
-server_thread = threading.Thread(target=run_web_server)
-server_thread.daemon = True
-server_thread.start()
+@app.route('/')
+def home():
+    return "Online"
 
-# --- SUA LÓGICA PRINCIPAL COMEÇA AQUI ---
-print("Sistema de monitoramento iniciado...")
-# Coloque aqui o seu código de análise da Tourex
-while True:
-    pass 
-# ----------------------------------------
+def rotina_principal():
+    # AQUI ENTRA O SEU CÓDIGO ORIGINAL DA TOUREX
+    print("Monitoramento ativo...")
+
+if __name__ == "__main__":
+    threading.Thread(target=rotina_principal).start()
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
 
