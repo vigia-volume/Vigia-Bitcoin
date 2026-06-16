@@ -1,18 +1,17 @@
+from iqoptionapi.stable_api import IQ_Option
 import os
-import threading
-from flask import Flask
 
-app = Flask(__name__)
+def ler_credenciais():
+    with open("/etc/secrets/credenciais", "r") as f:
+        d = {l.split('=')[0]: l.split('=')[1].strip() for l in f.read().splitlines()}
+    return d['EMAIL_IQ'], d['SENHA_IQ']
 
-@app.route('/')
-def home():
-    return "Online"
+email, senha = ler_credenciais()
+api = IQ_Option(email, senha)
+api.connect()
 
-def rotina_principal():
-    # AQUI ENTRA O SEU CÓDIGO ORIGINAL DA TOUREX
-    print("Monitoramento ativo...")
-
-if __name__ == "__main__":
-    threading.Thread(target=rotina_principal).start()
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+if api.check_connect():
+    print("Conectado com sucesso!")
+else:
+    print("Falha na conexão.")
 
